@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+</head>
+<body>
+
+<h2>Geocode</h2>
+Input a place name, one per line. Results will show in table below:<br/>
+<textarea rows="20" cols="80" id="qry"></textarea> <br/>
+<button id="submit">Geocode!</button><br/><br/>
+
+<table>
+	
+	<thead>
+		<tr>
+			<th>Place</th>
+			<th>Lat</th>
+			<th>Long</th>
+			<th>Formatted Address</th>
+			<th>Raw Data</th>
+		</tr>
+	</thead>
+
+	<tbody id="georesults" >
+		
+
+	</tbody>
+
+</table>
+
+
+
+<hr/>
+
+
+
+
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+
+		$("#submit").click(function(){
+
+			var arr= $("#qry").val().split("\n");
+
+			$("#georesults").html("");
+
+			for (var idx in arr){ 
+
+			$.when( $.get("/rest/geocode/" + arr[idx]), {place : arr[idx]} ).then(function( data,geocodeArr ) {
+			  
+				$("#georesults").append(
+					"<tr><td>"+geocodeArr.place+
+					"</td><td>"+data[0][0].geometry.location.lat+
+					"</td><td>"+data[0][0].geometry.location.lng+
+					"</td><td>"+data[0][0].formatted_address+
+					"</td><td><textarea>"+JSON.stringify(data[0][0])+"</textarea></td><tr>");
+
+			});
+
+			}
+		});
+
+	});
+
+</script>
+</body>
+</html>
